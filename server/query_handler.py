@@ -16,7 +16,8 @@ class QueryHandler(ABC):
 
 class LambdaQueryHandler(QueryHandler):
     def __init__(self, function_name):
-        self.client = boto3.client('lambda')
+        self.client = boto3.client('lambda', region_name='us-east-1')
+        self.function_name = function_name
 
     def call(self, payload):
         response = self.client.invoke(
