@@ -20,7 +20,7 @@ routes = [
     "/project/<string:project_id>/collaborators",
 ]
 
-def handle_request():
+def handle_request(**kwargs):
     """Manejador genérico para las rutas."""
     payload = {"route": request.path}
     response = query_handler.call(json.dumps(payload))
