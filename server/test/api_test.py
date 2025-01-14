@@ -29,3 +29,7 @@ def test_method_not_allowed(client):
     for route in routes:
         response = client.post(route)  
     assert response.status_code == 405
+
+def test_unusual_parameters(client):
+    response = client.get("/user/!@#$%^&*()")
+    assert response.status_code in [200, 400, 404]
