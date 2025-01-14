@@ -3,10 +3,6 @@ from flask_cors import CORS
 from query_handler import QueryHandlerFactory
 import json
 
-app = Flask(__name__)
-query_handler = QueryHandlerFactory().create_query_handler("lambda")
-CORS(app)
-
 routes = [
     "/users",
     "/user/<string:user_id>",
@@ -20,14 +16,24 @@ routes = [
     "/project/<string:project_id>/collaborators",
 ]
 
-def handle_request(**kwargs):
-    """Manejador genérico para las rutas."""
-    payload = {"route": request.path}
-    response = query_handler.call(json.dumps(payload))
-    return jsonify(json.loads(response))
+def create_app(custom_query_handler=None):
+    """Crea y configura una instancia de la aplicación Flask."""
+    app = Flask(__name__)
+    CORS(app)
 
-for route in routes:
-    app.route(route, methods=["GET"])(handle_request)
+    query_handler = custom_query_handler
+
+    def handle_request(**kwargs):
+        """Manejador genérico para las rutas."""
+        payload = {"route": request.path}
+        response = query_handler.call(json.dumps(payload))
+        return jsonify(json.loads(response))
+
+    for route in routes:
+        app.route(route, methods=["GET"])(handle_request)
+
+    return app
 
 if __name__ == '__main__':
+    app = create_app(QueryHandlerFactory().create_query_handler("lambda"))
     app.run(debug=False)
