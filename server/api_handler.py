@@ -18,37 +18,46 @@ routes = [
 ]
 
 REQUEST_COUNT = Counter(
-    "http_requests_total", "Total de solicitudes HTTP recibidas", ["method", "endpoint"]
+    "http_requests_total", "Total HTTP requests received", ["method", "endpoint"]
 )
 REQUEST_LATENCY = Histogram(
-    "http_request_latency_seconds", "Latencia de las solicitudes HTTP", ["endpoint"]
+    "http_request_latency_seconds", "Latency of HTTP requests", ["endpoint"]
 )
 
+def handle_request(query_handler, endpoint):
+    """Handles requests for a specific route."""
+    method = request.method
+
+    REQUEST_COUNT.labels(method=method, endpoint=endpoint).inc()
+
+    with REQUEST_LATENCY.labels(endpoint=endpoint).time():
+        payload = {"route": endpoint}
+        response = query_handler.call(json.dumps(payload))
+        return jsonify(json.loads(response))
+
+def register_routes(app, query_handler):
+    """Registers all defined routes in the Flask app."""
+    for route in routes:
+        app.add_url_rule(
+            route, 
+            endpoint=route, 
+            view_func=lambda **kwargs: handle_request(query_handler, route), 
+            methods=["GET"]
+        )
+
+def metrics():
+    """Exposes Prometheus metrics."""
+    return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
+
 def create_app(custom_query_handler=None):
-    """Crea y configura una instancia de la aplicación Flask."""
+    """Creates and configures the Flask application."""
     app = Flask(__name__)
     CORS(app)
 
     query_handler = custom_query_handler
 
-    def handle_request(**kwargs):
-        """Manejador genérico para las rutas."""
-        endpoint = request.path
-        method = request.method
-
-        REQUEST_COUNT.labels(method=method, endpoint=endpoint).inc()
-
-        with REQUEST_LATENCY.labels(endpoint=endpoint).time():
-            payload = {"route": request.path}
-            response = query_handler.call(json.dumps(payload))
-            return jsonify(json.loads(response))
-
-    for route in routes:
-        app.route(route, methods=["GET"])(handle_request)
-
-    @app.route("/metrics")
-    def metrics():
-        return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
+    register_routes(app, query_handler)
+    app.add_url_rule("/metrics", "metrics", metrics, methods=["GET"])
 
     return app
 

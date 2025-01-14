@@ -1,9 +1,7 @@
 import boto3
 from abc import ABC, abstractmethod
 
-
 lambda_function_name = "neo4j_query_handler_function"
-
 
 class QueryHandler(ABC):
     def __init__(self):
@@ -12,7 +10,6 @@ class QueryHandler(ABC):
     @abstractmethod
     def call(self, function_name, payload):
         pass
-
 
 class LambdaQueryHandler(QueryHandler):
     def __init__(self, function_name):
@@ -26,7 +23,6 @@ class LambdaQueryHandler(QueryHandler):
             Payload=payload
         )
         return response['Payload'].read()
-    
 
 class QueryHandlerFactory:
     def __init__(self):
