@@ -1,7 +1,9 @@
 import pytest
-from api_handler import create_app
 import json
+
+from api_handler import create_app
 from api_handler import routes
+
 
 class MockQueryHandler:
     def call(self, payload):
