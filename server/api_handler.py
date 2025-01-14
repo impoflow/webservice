@@ -35,14 +35,20 @@ def handle_request(query_handler, endpoint):
         response = query_handler.call(json.dumps(payload))
         return jsonify(json.loads(response))
 
+def create_view_func(query_handler, route):
+    """Creates a view function for a specific route."""
+    def view_func(**kwargs):
+        return handle_request(query_handler, route)
+    return view_func
+
 def register_routes(app, query_handler):
     """Registers all defined routes in the Flask app."""
     for route in routes:
         app.add_url_rule(
-            route, 
-            endpoint=route, 
-            view_func=lambda **kwargs: handle_request(query_handler, route), 
-            methods=["GET"]
+            route,
+            endpoint=route,
+            view_func=create_view_func(query_handler, route),
+            methods=["GET"],
         )
 
 def metrics():
@@ -54,13 +60,14 @@ def create_app(custom_query_handler=None):
     app = Flask(__name__)
     CORS(app)
 
-    query_handler = custom_query_handler
+    query_handler = custom_query_handler or QueryHandlerFactory().create_query_handler("lambda")
 
     register_routes(app, query_handler)
     app.add_url_rule("/metrics", "metrics", metrics, methods=["GET"])
 
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app(QueryHandlerFactory().create_query_handler("lambda"))
     app.run(debug=False)
