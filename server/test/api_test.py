@@ -35,3 +35,8 @@ def test_method_not_allowed(client):
 def test_unusual_parameters(client):
     response = client.get("/user/!@#$%^&*()")
     assert response.status_code in [200, 400, 404]
+
+def test_metrics_endpoint(client):
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    assert response.headers["Content-Type"] == "text/plain; version=0.0.4; charset=utf-8"
