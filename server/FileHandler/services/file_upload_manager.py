@@ -31,7 +31,7 @@ class FileUploadManager:
         if not is_valid:
             return False, message
 
-        zip_s3_key = f"{self.user_name}/{self.project_name}/{os.path.basename(self.file_path)}"
+        zip_s3_key = f"{self.user_name}/{os.path.basename(self.file_path)}"
         upload_ok = self.s3_uploader.upload_file(self.file_path, zip_s3_key)
         if not upload_ok:
             return False, "Error uploading ZIP to S3"
@@ -41,7 +41,7 @@ class FileUploadManager:
             "project_name": self.project_name,
             "collaborators": self.collaborators
         }
-        metadata_s3_key = f"{self.user_name}/{self.project_name}/metadata.json"
+        metadata_s3_key = f"{self.user_name}/{self.project_name}_metadata.json"
         upload_ok = self.s3_uploader.upload_json(metadata, metadata_s3_key)
         if not upload_ok:
             return False, "Error uploading metadata to S3"
