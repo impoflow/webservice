@@ -53,10 +53,14 @@ class RouteManager:
         e invoca la lógica apropiada del QueryHandler.
         """
         method = request.method
+        print(request.args.to_dict())
         REQUEST_COUNT.labels(method=method, endpoint=endpoint).inc()
 
         with REQUEST_LATENCY.labels(endpoint=endpoint).time():
-            payload = {"route": request.path}
+            if request.query_string:
+                payload = {"route": request.path + "?" + request.query_string.decode("utf-8")}
+            else:
+                payload = {"route": request.path}
 
             response_data = self.query_handler.call(json.dumps(payload))
             return jsonify(json.loads(response_data))

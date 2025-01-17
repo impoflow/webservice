@@ -20,22 +20,40 @@
         <section id="api-section">
             <header>
                 <h1>API Request UI</h1>
-                <p>Select an endpoint and make a GET request</p>
+                <p>Select an endpoint and add optional query parameters to make a GET request.</p>
             </header>
 
             <div>
-                <select id="endpoint">
+                <label for="endpoint"><strong>Select an Endpoint:</strong></label>
+                <select id="endpoint" onchange="updateQueryParamFields()">
                     <option value="/users">/users</option>
+                    <option value="/isolated/users">/isolated/users</option>
+                    <option value="/dense/users">/dense/users?degree=</option>
                     <option value="/user/:user_id">/user/:user_id</option>
                     <option value="/user/:user_id/projects">/user/:user_id/projects</option>
                     <option value="/user/:user_id/collaborations">/user/:user_id/collaborations</option>
                     <option value="/user/:user_id/collaborators">/user/:user_id/collaborators</option>
                     <option value="/projects">/projects</option>
+                    <option value="/dense/projects">/dense/projects?degree=</option>
                     <option value="/project/:project_id">/project/:project_id</option>
                     <option value="/project/:project_id/owner">/project/:project_id/owner</option>
                     <option value="/project/:project_id/classes">/project/:project_id/classes</option>
                     <option value="/project/:project_id/collaborators">/project/:project_id/collaborators</option>
+                    <option value="/shortest_path">/shortest_path?user1=&user2=</option>
+                    <option value="/all_paths">/all_paths?user1=&user2=&max_depth=</option>
+                    <option value="/clusters">/clusters</option>
+                    <option value="/report">/report</option>
                 </select>
+            </div>
+
+            <div id="query-params">
+                <h3>Add Query Parameters:</h3>
+                <div id="queryParamFields">
+                </div>
+                <button onclick="addQueryParamField()">Add Query Parameter</button>
+            </div>
+
+            <div>
                 <button onclick="makeRequest()">Send Request</button>
             </div>
 
@@ -44,7 +62,6 @@
                 <pre id="responseData">Select an endpoint and press "Send Request" to see the response.</pre>
             </div>
         </section>
-
 
         <section id="home-section" style="display: none;">
             <h1>Upload a Project</h1>
@@ -63,7 +80,6 @@
             <div id="uploadResponse"></div>
         </section>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>

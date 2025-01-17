@@ -2,9 +2,7 @@ const API_BASE_URL = 'http://{backend_ip}:5000';
 const FILE_UPLOAD_BASE_URL = 'http://{backend_ip}:5001';
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("home-section").style.display = "block";
-
-    document.getElementById("api-section").style.display = "none";
+    showHome();
 });
 
 function showHome() {
@@ -33,8 +31,25 @@ async function makeRequest() {
         endpoint = endpoint.replace(':project_id', projectId);
     }
 
+    // Gather query params
+    const queryParams = {};
+    const queryParamFields = document.querySelectorAll(".query-param");
+    queryParamFields.forEach(field => {
+        const key = field.querySelector(".query-key").value;
+        const value = field.querySelector(".query-value").value;
+        if (key) {
+            queryParams[key] = value;
+        }
+    });
+
+    const queryString = Object.keys(queryParams)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+        .join("&");
+
+    const url = queryString ? `${API_BASE_URL}${endpoint}?${queryString}` : `${API_BASE_URL}${endpoint}`;
+
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`);
+        const response = await fetch(url);
         const data = await response.json();
         document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
     } catch (error) {
@@ -42,34 +57,31 @@ async function makeRequest() {
     }
 }
 
-async function uploadFile() {
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
+function addQueryParamField() {
+    const queryParamFields = document.getElementById("queryParamFields");
 
-    if (!file) {
-        document.getElementById('uploadResponse').textContent = "No se seleccionó ningún archivo.";
-        return;
-    }
+    const div = document.createElement("div");
+    div.className = "query-param";
 
-    const formData = new FormData();
-    formData.append('file', file);
+    const keyInput = document.createElement("input");
+    keyInput.type = "text";
+    keyInput.placeholder = "Key (e.g., user1)";
+    keyInput.className = "query-key";
 
-    try {
-        const response = await fetch(`${FILE_UPLOAD_BASE_URL}/upload`, {
-            method: 'POST',
-            body: formData,
-        });
+    const valueInput = document.createElement("input");
+    valueInput.type = "text";
+    valueInput.placeholder = "Value (e.g., 12345)";
+    valueInput.className = "query-value";
 
-        if (!response.ok) {
-            const errorResponse = await response.json();
-            throw new Error(errorResponse.error || 'Unknown server error, please contact the administrator.');
-        }
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.textContent = "Remove";
+    removeButton.onclick = () => div.remove();
 
-        const result = await response.json();
-        document.getElementById('uploadResponse').textContent = `File uploaded successfully.`;
-    } catch (error) {
-        document.getElementById('uploadResponse').textContent = `Error: ${error.message}`;
-    }
+    div.appendChild(keyInput);
+    div.appendChild(valueInput);
+    div.appendChild(removeButton);
+    queryParamFields.appendChild(div);
 }
 
 async function submitForm() {
@@ -93,16 +105,15 @@ async function submitForm() {
             method: 'POST',
             body: formData,
         });
-    
+
         if (!response.ok) {
-            const errorText = await response.text(); // Obtiene el texto completo de la respuesta
+            const errorText = await response.text();
             throw new Error(`Server Error: ${errorText}`);
         }
-    
+
         const result = await response.json();
         document.getElementById('uploadResponse').textContent = `Form submitted successfully. Response: ${JSON.stringify(result, null, 2)}`;
     } catch (error) {
         document.getElementById('uploadResponse').textContent = `Error: ${error.message}`;
     }
-}    
-
+}
