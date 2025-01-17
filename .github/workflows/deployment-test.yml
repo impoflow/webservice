@@ -21,6 +21,11 @@ jobs:
     - name: Enable client to accept localhost
       run: |
         sed -i "s/{backend_ip}/localhost/g" client/script.js
+    
+    - name: Mock Environment Variables
+      run: |
+        BUCKET_NAME=mock-bucket
+        REGION=us-east-1
 
     - name: Install Docker Compose
       run: |
@@ -29,7 +34,7 @@ jobs:
 
     - name: Run Docker Compose
       run: |
-        docker-compose up -d
+        BUCKET_NAME=mock-bucket REGION=us-east-1 docker-compose up -d
 
     - name: Build and Start Containers
       run: |
@@ -38,7 +43,7 @@ jobs:
         # Construye los servicios definidos en docker-compose.yml
         docker-compose build
         # Arranca los servicios en segundo plano
-        docker-compose up -d
+        BUCKET_NAME=mock-bucket REGION=us-east-1 docker-compose up -d
         # Muestra los logs (útil para depuración)
         docker-compose logs
 

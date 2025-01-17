@@ -22,7 +22,7 @@ class S3Uploader:
             self.s3_client.upload_file(local_path, self.bucket_name, s3_key)
             os.remove(local_path)  # Elimina el archivo local después de subirlo
             return True
-        except (BotoCoreError, ClientError) as e:
+        except (BotoCoreError, ClientError, Exception) as e:
             print(f"S3 upload failed for file '{local_path}': {e}")
             return False
 
@@ -40,6 +40,6 @@ class S3Uploader:
                 ContentType="application/json"
             )
             return True
-        except (BotoCoreError, ClientError) as e:
+        except (BotoCoreError, ClientError, Exception) as e:
             print(f"S3 upload failed for JSON data: {e}")
             return False
