@@ -1,0 +1,42 @@
+name: Run Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install Dependencies
+      run: |
+        # Instala dependencias de ApiHandler
+        pip install -r server/ApiHandler/requirements.txt
+        # Instala dependencias de FileHandler (si aplicable)
+        pip install -r server/FileHandler/requirements.txt
+
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$(pwd)/server" >> $GITHUB_ENV
+
+    - name: Run ApiHandler Tests
+      working-directory: server/ApiHandler
+      run: python -m unittest discover -s test -p "test_*.py"
+
+    - name: Run FileHandler Tests
+      working-directory: server/FileHandler
+      run: python -m unittest discover -s tests -p "test_*.py"

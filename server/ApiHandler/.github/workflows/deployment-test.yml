@@ -1,0 +1,45 @@
+name: Test Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-deployment:
+    name: Build and Test Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and Start Containers
+      run: |
+        # Baja cualquier contenedor en ejecución
+        docker-compose down --remove-orphans || true
+        # Construye los servicios definidos en docker-compose.yml
+        docker-compose build
+        # Arranca los servicios en segundo plano
+        docker-compose up -d
+        # Muestra los logs (útil para depuración)
+        docker-compose logs
+
+    - name: Test API Endpoints
+      run: |
+        # Espera unos segundos para asegurarte de que los servicios estén listos
+        sleep 10
+        # Verifica la salud de la API del servidor
+        curl -f http://localhost:5000/health || exit 1
+        # Agrega más pruebas para rutas específicas si es necesario
+        curl -f http://localhost:5000/metrics || exit 1
+
+    - name: Stop and Clean Up
+      run: docker-compose down --remove-orphans
