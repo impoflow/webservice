@@ -1,7 +1,0 @@
-flask==3.1.0
-flask-cors==5.0.0
-pytest==8.3.4
-requests==2.32.3
-mocket==3.13.2
-boto3==1.35.98
-prometheus_client==0.21.1
