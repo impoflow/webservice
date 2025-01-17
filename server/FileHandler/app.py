@@ -13,8 +13,8 @@ ALLOWED_EXTENSIONS = {"zip"}
 app = Flask(__name__)
 CORS(app)
 
-S3_BUCKET_NAME = os.envget("S3_BUCKET_NAME")
-AWS_REGION = os.envget("AWS_REGION")
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+AWS_REGION = os.getenv("AWS_REGION")
 
 validation_service = ValidationService()
 s3_uploader = S3Uploader(bucket_name=S3_BUCKET_NAME, aws_region=AWS_REGION)

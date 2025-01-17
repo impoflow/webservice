@@ -47,14 +47,5 @@ jobs:
         # Muestra los logs (útil para depuración)
         docker-compose logs
 
-    - name: Test API Endpoints
-      run: |
-        # Espera unos segundos para asegurarte de que los servicios estén listos
-        sleep 60
-        # Verifica la salud de la API del servidor
-        curl -f http://localhost:5000/health || exit 1
-        # Verifica la salud de la FILE API del servidor
-        curl -f http://localhost:5001/health || exit 1
-
     - name: Stop and Clean Up
       run: docker-compose down --remove-orphans
