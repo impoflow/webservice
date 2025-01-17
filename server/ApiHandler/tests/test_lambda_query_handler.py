@@ -19,7 +19,7 @@ class TestLambdaQueryHandler(unittest.TestCase):
 
         self.assertEqual(response, '{"result": "ok"}')
         mock_lambda.invoke.assert_called_once()
-
+    
     def test_lambda_query_handler_failure(self):
         mock_client = MagicMock()
         mock_client.invoke.side_effect = BotoCoreError()

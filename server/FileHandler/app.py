@@ -13,8 +13,8 @@ ALLOWED_EXTENSIONS = {"zip"}
 app = Flask(__name__)
 CORS(app)
 
-S3_BUCKET_NAME = "neo4j-tscd-310-10-2025"
-AWS_REGION = "us-east-1"
+S3_BUCKET_NAME = os.envget("S3_BUCKET_NAME")
+AWS_REGION = os.envget("AWS_REGION")
 
 validation_service = ValidationService()
 s3_uploader = S3Uploader(bucket_name=S3_BUCKET_NAME, aws_region=AWS_REGION)
@@ -27,6 +27,13 @@ def allowed_file(filename: str) -> bool:
         "." in filename and
         filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
+
+@app.route("/health", methods=["GET"])
+def health():
+    """
+    Ruta de salud.
+    """
+    return "OK"
 
 @app.route("/upload", methods=["POST"])
 def handle_upload():

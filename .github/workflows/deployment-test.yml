@@ -17,12 +17,16 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
+    
+    - name: Enable client to accept localhost
+      run: |
+        sed -i "s/{backend_ip}/localhost/g" client/script.js
+
     - name: Install Docker Compose
       run: |
         sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
-      
+
     - name: Run Docker Compose
       run: |
         docker-compose up -d
@@ -41,11 +45,11 @@ jobs:
     - name: Test API Endpoints
       run: |
         # Espera unos segundos para asegurarte de que los servicios estén listos
-        sleep 10
+        sleep 60
         # Verifica la salud de la API del servidor
         curl -f http://localhost:5000/health || exit 1
-        # Agrega más pruebas para rutas específicas si es necesario
-        curl -f http://localhost:5000/metrics || exit 1
+        # Verifica la salud de la FILE API del servidor
+        curl -f http://localhost:5001/health || exit 1
 
     - name: Stop and Clean Up
       run: docker-compose down --remove-orphans

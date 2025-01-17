@@ -19,6 +19,7 @@ def create_app(query_handler_type="lambda"):
     route_manager.register_routes()
 
     app.add_url_rule("/metrics", "metrics", metrics, methods=["GET"])
+    app.add_url_rule("/health", "health", lambda: "OK", methods=["GET"])
 
     return app
 

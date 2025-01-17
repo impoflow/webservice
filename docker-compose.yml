@@ -27,6 +27,9 @@ services:
       - "5001:5001"
     networks:
       - app_network
+    environment:
+      - S3_BUCKET_NAME=${ BUCKET_NAME }
+      - AWS_REGION=${ REGION }
 
 networks:
   app_network:

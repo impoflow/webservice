@@ -56,10 +56,7 @@ class RouteManager:
         REQUEST_COUNT.labels(method=method, endpoint=endpoint).inc()
 
         with REQUEST_LATENCY.labels(endpoint=endpoint).time():
-            # Aquí puedes incluir la lógica o payload específico
-            # dependiendo de la ruta, en este ejemplo es genérico.
             payload = {"route": endpoint}
 
             response_data = self.query_handler.call(json.dumps(payload))
-            # Se asume que la respuesta de la Lambda es un JSON serializable
             return jsonify(json.loads(response_data))
