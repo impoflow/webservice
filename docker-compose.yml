@@ -5,7 +5,7 @@ services:
     build: ./client
     container_name: client
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - api_handler
       - file_handler
