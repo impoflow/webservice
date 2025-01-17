@@ -56,7 +56,7 @@ class RouteManager:
         REQUEST_COUNT.labels(method=method, endpoint=endpoint).inc()
 
         with REQUEST_LATENCY.labels(endpoint=endpoint).time():
-            payload = {"route": endpoint}
+            payload = {"route": request.path}
 
             response_data = self.query_handler.call(json.dumps(payload))
             return jsonify(json.loads(response_data))
