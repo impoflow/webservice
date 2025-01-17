@@ -29,14 +29,30 @@ jobs:
         pip install -r server/ApiHandler/requirements.txt
         # Instala dependencias de FileHandler (si aplicable)
         pip install -r server/FileHandler/requirements.txt
+        # Instala coverage
+        pip install coverage
 
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)/server" >> $GITHUB_ENV
 
-    - name: Run ApiHandler Tests
+    - name: Run ApiHandler Tests with Coverage
       working-directory: server/ApiHandler
-      run: python -m unittest discover -s tests -p "test_*.py"
+      run: |
+        coverage run --source=. -m unittest discover -s tests -p "test_*.py"
+        coverage report
+        coverage html
 
-    - name: Run FileHandler Tests
+    - name: Run FileHandler Tests with Coverage
       working-directory: server/FileHandler
-      run: python -m unittest discover -s tests -p "test_*.py"
+      run: |
+        coverage run --source=. -m unittest discover -s tests -p "test_*.py"
+        coverage report
+        coverage html
+
+    - name: Upload Coverage Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-reports
+        path: |
+          server/ApiHandler/htmlcov
+          server/FileHandler/htmlcov
