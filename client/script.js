@@ -1,5 +1,5 @@
-const API_BASE_URL = 'http://{backend_ip}:5000';
-const FILE_UPLOAD_BASE_URL = 'http://{backend_ip}:5001';
+const API_BASE_URL = 'http://api_handler:5000';
+const FILE_UPLOAD_BASE_URL = 'http://file_handler:5001';
 
 document.addEventListener("DOMContentLoaded", () => {
     showHome();
