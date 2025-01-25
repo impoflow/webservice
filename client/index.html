@@ -26,15 +26,15 @@
             <div>
                 <label for="endpoint"><strong>Select an Endpoint:</strong></label>
                 <select id="endpoint" onchange="updateQueryParamFields()">
-                    <option value="/users">/users</option>
+                    <option value="/users">/users?degree</option>
                     <option value="/users/clusters">/users/clusters</option>
                     <option value="/users/:user_id">/users/:user_id</option>
                     <option value="/users/:user_id/projects">/users/:user_id/projects</option>
                     <option value="/users/:user_id/collaborations">/users/:user_id/collaborations</option>
                     <option value="/users/:user_id/collaborators">/users/:user_id/collaborators</option>
-                    <option value="/users/:user_id/shortest_path">/users/:user_id/shortest_path</option>
-                    <option value="/users/:user_id/all_paths">/users/:user_id/all_paths</option>
-                    <option value="/projects">/projects</option>
+                    <option value="/users/:user_id/shortest_path">/users/:user_id/shortest_path?user*</option>
+                    <option value="/users/:user_id/all_paths">/users/:user_id/all_paths?user*&max_depth*</option>
+                    <option value="/projects">/projects?degree</option>
                     <option value="/projects/clusters">/projects/clusters</option>
                     <option value="/projects/:project_id">/projects/:project_id</option>
                     <option value="/projects/:project_id/owner">/projects/:project_id/owner</option>
