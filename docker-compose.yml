@@ -16,7 +16,7 @@ services:
     build: ./server/ApiHandler
     container_name: api_handler
     volumes:
-      - /home/user-ec2/.aws/:/root/.aws/
+      - /home/ec2-user/.aws/:/root/.aws/
     ports:
       - "5000:5000"
     networks:
